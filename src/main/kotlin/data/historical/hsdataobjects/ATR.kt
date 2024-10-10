@@ -1,4 +1,4 @@
-package me.paulrobinson.data.historical
+package me.paulrobinson.data.historical.hsdataobjects
 
 import java.io.Serializable
 import java.time.LocalDate

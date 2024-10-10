@@ -7,10 +7,12 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    maven(url="https://jitpack.io")
 }
 
 dependencies {
     testImplementation(kotlin("test"))
+    implementation("com.github.polygon-io:client-jvm:5.1.2");
 }
 
 tasks.test {
