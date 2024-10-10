@@ -1,5 +1,12 @@
-package me.paulrobinson.data.historical
+package me.paulrobinson.data.historical.hsdataobjects
 
 import java.io.Serializable
+import java.time.LocalDate
 
-data class Session (var sessionDate: String, var historicalATR: ATR, var sessionCandles: ArrayList<Candle>, var highestAV: Double, var lowestAV: Double) : Serializable
+class Session () : Serializable {
+    var sessionDate: LocalDate = LocalDate.MIN
+    var historicalATR: ATR = ATR(-1.0, LocalDate.MIN)
+    var sessionCandles: ArrayList<Candle> = ArrayList()
+    var highestAV: Double = 0.0
+    var lowestAV: Double = 0.0
+}
