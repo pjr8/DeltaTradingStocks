@@ -8,10 +8,12 @@ import java.time.*
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class APIHandler {
-    private val API_KEY = "c0pIklBuYjU6OQ5FScAONs7PAhQwbn9p"
-    private val httpsProvider: DefaultOkHttpClientProvider = DefaultOkHttpClientProvider()
-    private val polygonClient: PolygonRestClient = PolygonRestClient(API_KEY, httpsProvider)
+class APIHandler() {
+    companion object {
+        private const val API_KEY = "6XNAOfJMkLup9fyWCxW4SWPYg34jjJkZ"
+        private val httpsProvider: DefaultOkHttpClientProvider = DefaultOkHttpClientProvider()
+        val polygonClient: PolygonRestClient = PolygonRestClient(API_KEY, httpsProvider)
+    }
 
     fun getSessionStartDates(ticker: String, sessionEndDate: LocalDate, sessions: Int) : List<LocalDate> {
         val toReturn : MutableList<LocalDate> = ArrayList()
