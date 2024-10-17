@@ -1,4 +1,4 @@
-package me.paulrobinson.client
+package me.paulrobinson.server.client
 
 class ClientHandler {
 

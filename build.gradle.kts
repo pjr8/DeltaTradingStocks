@@ -12,7 +12,8 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
-    implementation("com.github.polygon-io:client-jvm:5.1.2");
+    implementation("com.github.polygon-io:client-jvm:5.1.2")
+    implementation("org.mongodb:mongodb-driver-sync:5.1.0")
 }
 
 tasks.test {

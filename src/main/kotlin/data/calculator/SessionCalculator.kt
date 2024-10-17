@@ -1,5 +1,6 @@
 package me.paulrobinson.data.calculator
 
+import api.APIHandler
 import io.polygon.kotlin.sdk.rest.AggregatesParameters
 import io.polygon.kotlin.sdk.rest.PolygonRestClient
 import me.paulrobinson.data.historical.hsdataobjects.ATR
@@ -11,9 +12,9 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-class SessionCalculator {
+class SessionCalculator() {
 
-    val polygonClient = PolygonRestClient("")
+    private val polygonClient = APIHandler.polygonClient
 
     fun calculate(
         ticker: String,
