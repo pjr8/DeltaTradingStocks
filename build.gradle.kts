@@ -14,6 +14,7 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation("com.github.polygon-io:client-jvm:5.1.2")
     implementation("org.mongodb:mongodb-driver-sync:5.1.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
 }
 
 tasks.test {

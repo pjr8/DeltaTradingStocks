@@ -10,7 +10,7 @@ import me.paulrobinson.data.historical.HsData
 import java.time.LocalDate
 import java.time.ZoneId
 
-class DataHandler() {
+class DataHandler() : Runnable {
 
     //private val INTERNAL_STOCKS = listOf<String>("AAPL", "GOOGL", "AMZN", "MSFT", "TSLA")
 
@@ -20,7 +20,7 @@ class DataHandler() {
     private val ZONE_ID = ZoneId.of("America/New_York")
     val hsDataStocksLoaded = HashSet<HsData>()
 
-    fun initialize() {
+    override fun run() {
         println("Data Initializing...")
         INTERNAL_STOCKS.add("AAPL")
         for (stock in INTERNAL_STOCKS) {
@@ -77,4 +77,5 @@ class DataHandler() {
         }*/
         return hsData
     }
+
 }

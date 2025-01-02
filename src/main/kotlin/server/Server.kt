@@ -3,17 +3,12 @@ package me.paulrobinson.server
 import me.paulrobinson.server.client.Client
 import java.net.ServerSocket
 
-class Server {
+class Server : Runnable {
     private val serverSocket : ServerSocket = ServerSocket(8080)
     private val clientList = HashSet<Client>()
     private var running = true
 
-    fun sendDataToAllClients(data: String) {
-        println("Sending data to all clients: $data")
-    }
-
-
-    fun initialize() {
+    override fun run() {
         while (running) {
             val socket = serverSocket.accept()
             val client = Client(socket)
@@ -21,11 +16,11 @@ class Server {
             println("Client ${socket.inetAddress.hostAddress}:${socket.port} connected")
             client.start()
         }
-
     }
 
-
-
+    fun sendDataToAllClients(data: String) {
+        println("Sending data to all clients: $data")
+    }
 
 }
 
