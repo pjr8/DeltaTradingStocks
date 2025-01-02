@@ -12,5 +12,13 @@ class HsData(val ticker: String, val sessions: Int, val sessionEndDate : LocalDa
     var standardDeviationPositive = 0.0
     var standardDeviationNegative = 0.0
     var historicalAtrList: List<ATR> = ArrayList(0)
-    var historicalSessionList: List<Session> = ArrayList(0)
+    var historicalSessionList: List<Session>? = ArrayList(0)
+    
+    override fun toString(): String {
+        return "HsData(ticker='$ticker', sessions=$sessions, sessionEndDate=$sessionEndDate, " +
+               "sessionBeginDate=$sessionBeginDate, sessionBeginDateATR=$sessionBeginDateATR, " +
+               "averageMaxPositiveAVSpread=$averageMaxPositiveAVSpread, averageMaxNegativeAVSpread=$averageMaxNegativeAVSpread, " +
+               "standardDeviationPositive=$standardDeviationPositive, standardDeviationNegative=$standardDeviationNegative, " +
+               "historicalAtrList=$historicalAtrList, historicalSessionList=$historicalSessionList)"
+    }
 }
