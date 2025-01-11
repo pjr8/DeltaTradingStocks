@@ -4,6 +4,8 @@ import io.polygon.kotlin.sdk.DefaultOkHttpClientProvider
 import io.polygon.kotlin.sdk.rest.AggregatesDTO
 import io.polygon.kotlin.sdk.rest.AggregatesParameters
 import io.polygon.kotlin.sdk.rest.PolygonRestClient
+import me.paulrobinson.data.historical.hsdataobjects.Candle
+import me.paulrobinson.data.historical.hsdataobjects.Session
 import java.time.*
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -14,6 +16,8 @@ class APIHandler() {
         private val httpsProvider: DefaultOkHttpClientProvider = DefaultOkHttpClientProvider()
         val polygonClient: PolygonRestClient = PolygonRestClient(API_KEY, httpsProvider)
     }
+
+
 
     fun getSessionStartDates(ticker: String, sessionEndDate: LocalDate, sessions: Int) : List<LocalDate> {
         val toReturn : MutableList<LocalDate> = ArrayList()
@@ -53,6 +57,65 @@ class APIHandler() {
             "asc"
         )
         return polygonClient.getAggregatesBlocking(params)
+    }
+
+    fun getRealTimeSessionFull(ticker: String) : Session {
+        val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+        val params = AggregatesParameters(
+            ticker = ticker,
+            timespan = "second",
+            fromDate = today,
+            toDate = today,
+            sort = "asc",
+            limit = 50_000
+        )
+        val results = polygonClient.getAggregatesBlocking(params)
+        val historicalSession = Session()
+        val candleList = ArrayList<Candle>()
+        results.results.forEach { aggregate ->
+            val historicalCandle = Candle()
+            historicalCandle.low = aggregate.low!!
+            historicalCandle.high = aggregate.high!!
+            historicalCandle.open = aggregate.open!!
+            historicalCandle.close = aggregate.close!!
+            historicalCandle.volume = aggregate.volume!!.toInt()
+            historicalCandle.datedCandle = LocalDateTime.ofInstant(Instant.ofEpochMilli(aggregate.timestampMillis!!),
+                ZoneId.of("America/New_York"))
+            candleList.add(historicalCandle)
+        }
+        historicalSession.sessionCandles = candleList
+        return historicalSession
+    }
+
+
+    fun getRealTimeSessionPartial(ticker: String) : List<Candle> {
+        val candleList = ArrayList<Candle>()
+        try {
+            val today = LocalDate.now().format(DateTimeFormatter.ISO_DATE)
+            val params = AggregatesParameters(
+                ticker = ticker,
+                timespan = "second",
+                fromDate = today,
+                toDate = today,
+                sort = "desc",
+                limit = 15
+            )
+            val results = polygonClient.getAggregatesBlocking(params)
+            results.results.forEach { aggregate ->
+                val historicalCandle = Candle()
+                historicalCandle.low = aggregate.low!!
+                historicalCandle.high = aggregate.high!!
+                historicalCandle.open = aggregate.open!!
+                historicalCandle.close = aggregate.close!!
+                historicalCandle.volume = aggregate.volume!!.toInt()
+                historicalCandle.datedCandle = LocalDateTime.ofInstant(Instant.ofEpochMilli(aggregate.timestampMillis!!),
+                    ZoneId.of("America/New_York"))
+                candleList.add(historicalCandle)
+            }
+        } catch (e: Exception) {
+            println("Error getting real time session partial: $e")
+        }
+        return candleList
     }
 
     private fun calculateWeekend(date : LocalDate) : LocalDate {

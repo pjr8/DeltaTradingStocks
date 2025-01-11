@@ -1,29 +1,33 @@
 package me.paulrobinson
 
-import kotlinx.coroutines.*
 import me.paulrobinson.data.DataHandler
 import me.paulrobinson.server.Server
 import me.paulrobinson.server.ServerInput
-import kotlin.time.Duration
+import me.paulrobinson.server.realtimedata.RealTimeData
+import me.paulrobinson.server.realtimedata.websocket.RealTimeStockWebSocket
 
 class Main {
     companion object {
-        var server = Server()
-        var dataHandler = DataHandler()
-        var serverInput = ServerInput()
+        val startupTickers = listOf<String>("NVDA", "TSLA", "MSFT",
+            "COIN", "AMZN", "TSM", "NIO", "CVNA", "LLY", "QQQ", "META",
+            "NFLX", "NIO", "PLTR", "RIOT", "RIVN", "AMD", "AMZN", "AVGO",
+            "COIN", "CVNA")
+        val server = Server()
+        val dataHandler = DataHandler()
+        val serverInput = ServerInput()
+        val websocket = RealTimeStockWebSocket()
+        val realTimeData = RealTimeData()
         var running = true
     }
 
     fun start() {
+        websocket.realTimeStocksJava("6XNAOfJMkLup9fyWCxW4SWPYg34jjJkZ")
+        Thread(dataHandler).start()
+        Thread(server).start()
+        Thread(serverInput).start()
+        Thread(realTimeData).start()
         while (running) {
         }
-        println("Server Initializing...")
-
-        serverInput.run()
-        dataHandler.run()
-        server.run()
-
-        println("Server Initialized")
     }
 }
 

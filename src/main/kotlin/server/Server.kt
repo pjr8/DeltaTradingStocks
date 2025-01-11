@@ -4,22 +4,32 @@ import me.paulrobinson.server.client.Client
 import java.net.ServerSocket
 
 class Server : Runnable {
-    private val serverSocket : ServerSocket = ServerSocket(8080)
+    private val serverSocket : ServerSocket = ServerSocket(25566)
     private val clientList = HashSet<Client>()
     private var running = true
 
     override fun run() {
         while (running) {
-            val socket = serverSocket.accept()
-            val client = Client(socket)
-            clientList.add(client)
-            println("Client ${socket.inetAddress.hostAddress}:${socket.port} connected")
-            client.start()
+            try {
+                val socket = serverSocket.accept()
+                val client = Client(socket)
+                clientList.add(client)
+                println("Client ${socket.inetAddress.hostAddress}:${socket.port} connected")
+                client.start()
+            } catch (e: Exception) {
+                println("Error while running server: $e")
+            }
         }
     }
 
+    fun removeClient(client: Client) {
+        clientList.remove(client)
+    }
+
     fun sendDataToAllClients(data: String) {
-        println("Sending data to all clients: $data")
+        clientList.forEach {
+            it.send(data)
+        }
     }
 
 }

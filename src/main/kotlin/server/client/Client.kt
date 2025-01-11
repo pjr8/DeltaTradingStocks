@@ -1,16 +1,21 @@
 package me.paulrobinson.server.client
 
+import me.paulrobinson.Main
 import java.net.Socket
 
 class Client(private val socket: Socket) : Thread() {
+    var running = true
+
     override fun run() {
-        while (true) {
+        while (running) {
             try {
                 val message = receive()
                 println("Received: $message")
                 send("Received: $message")
             } catch (e: Exception) {
-                e.printStackTrace()
+                println("Client ${socket.inetAddress.hostAddress}:${socket.port} disconnected")
+                Main.server.removeClient(this)
+                running = false
             }
 
         }
@@ -21,7 +26,8 @@ class Client(private val socket: Socket) : Thread() {
     }
 
     fun send(message: String) {
-        socket.getOutputStream().write(message.toByteArray())
+        val toSend = message + "\n"
+        socket.getOutputStream().write(toSend.toByteArray())
     }
 
     fun close() {
