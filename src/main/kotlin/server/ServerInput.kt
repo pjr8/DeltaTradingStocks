@@ -6,8 +6,16 @@ class ServerInput : Runnable {
     override fun run() {
         println("Server Input Started")
         while (Main.running) {
-            val input = readln()
-            println("Received input: $input")
+            try {
+                val input = readln()
+                //Main.server.sendDataToAllClients(input)
+                println("Adding new stock: $input")
+                Main.dataHandler.addNewData(input)
+            } catch (e: Exception) {
+                println("Error while receiving input: $e")
+            }
         }
+
+
     }
 }

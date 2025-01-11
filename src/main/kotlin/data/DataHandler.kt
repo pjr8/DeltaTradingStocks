@@ -1,7 +1,13 @@
 package me.paulrobinson.data
 
 import api.APIHandler
-import io.polygon.kotlin.sdk.rest.PolygonRestClient
+import data.timebucket.AVTBCalculator
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
+import me.paulrobinson.Main
 import me.paulrobinson.data.calculator.ATRCalculator
 import me.paulrobinson.data.calculator.AvgMaxAVSpreadCalculator
 import me.paulrobinson.data.calculator.SessionCalculator
@@ -12,9 +18,6 @@ import java.time.ZoneId
 
 class DataHandler() : Runnable {
 
-    //private val INTERNAL_STOCKS = listOf<String>("AAPL", "GOOGL", "AMZN", "MSFT", "TSLA")
-
-    private val INTERNAL_STOCKS = HashSet<String>()// listOf<String>("AAPL")
     private val SESSIONS = 10
     private val LATEST_HISTORICAL_DATE = LocalDate.now().minusDays(1);
     private val ZONE_ID = ZoneId.of("America/New_York")
@@ -22,14 +25,42 @@ class DataHandler() : Runnable {
 
     override fun run() {
         println("Data Initializing...")
-        INTERNAL_STOCKS.add("AAPL")
-        for (stock in INTERNAL_STOCKS) {
-            hsDataStocksLoaded.add(createHistoricalData(stock))
+
+        val results = Main.startupTickers.map { ticker ->
+            CoroutineScope(Dispatchers.Default).async {
+                try {
+                    createData(ticker)
+                } catch (e: Exception) {
+                    println("Error processing $ticker: ${e.message}")
+                    e.printStackTrace()
+                }
+            }
         }
-        println("Data Initialized")
+
+        // Await all coroutines to complete
+        runBlocking {
+            val finished = results.awaitAll() // Awaits all Deferreds in the list
+            println("Data Initialized")
+        }
     }
 
-    fun createHistoricalData(stock: String) : HsData {
+    fun addNewData(stock: String) {
+        CoroutineScope(Dispatchers.Default).async {
+            try {
+                createData(stock)
+            } catch (e: Exception) {
+                println("Error processing $stock: ${e.message}")
+                e.printStackTrace()
+            }
+        }
+    }
+
+    private fun createData(stock: String) {
+        hsDataStocksLoaded.add(createHistoricalData(stock))
+    }
+
+
+    private fun createHistoricalData(stock: String) : HsData {
         val beginDates = APIHandler().getSessionStartDates(
             stock, LATEST_HISTORICAL_DATE,
             SESSIONS
@@ -56,25 +87,13 @@ class DataHandler() : Runnable {
         hsData.standardDeviationNegative = standardDeviationNegative
         hsData.historicalAtrList = historicalAtrList
         hsData.historicalSessionList = historicalSessionList
+        hsData.timeBucketList = AVTBCalculator().calculate(hsData)
 
-/*        println("Historical Data for $stock created")
-        println("Session Begin Date: $sessionBeginDate")
-        println("Session Begin Date ATR: $sessionBeginDateATR")
-        println("Average Max Positive AV Spread: $averageMaxPositiveAVSpread")
-        println("Average Max Negative AV Spread: $averageMaxNegativeAVSpread")
-        println("Standard Deviation Positive: $standardDeviationPositive")
-        println("Standard Deviation Negative: $standardDeviationNegative")
-        println("Historical ATR List: $historicalAtrList")
-        println("Historical Session List: $historicalSessionList")*/
 
-/*        historicalSessionList.forEach {
-            println("Session Date: ${it.sessionDate}")
-            println("Session ATR: ${it.historicalATR.atrValue}")
-            //println("Session Candles: ${it.sessionCandles}")
-            println("Session Candles Size: ${it.sessionCandles.size}")
-            println("Session Highest AV: ${it.highestAV}")
-            println("Session Lowest AV: ${it.lowestAV}")
-        }*/
+        Main.websocket.addStock(stock.uppercase())
+        Main.realTimeData.addRealTimeStock(hsData)
+
+
         return hsData
     }
 
