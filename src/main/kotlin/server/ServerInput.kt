@@ -8,7 +8,6 @@ class ServerInput : Runnable {
         while (Main.running) {
             try {
                 val input = readln()
-                //Main.server.sendDataToAllClients(input)
                 println("Adding new stock: $input")
                 Main.dataHandler.addNewData(input)
             } catch (e: Exception) {
