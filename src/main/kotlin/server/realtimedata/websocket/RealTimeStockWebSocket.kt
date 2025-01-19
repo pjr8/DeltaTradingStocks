@@ -34,7 +34,7 @@ class RealTimeStockWebSocket {
                 ) {
                     when (message) {
                         is PolygonWebSocketMessage.RawMessage -> println(String(message.data))
-                        is PolygonWebSocketMessage.StatusMessage -> println("Status: ${message.message}")
+                        is PolygonWebSocketMessage.StatusMessage -> println("[Polygon WebSocket] Status: ${message.message}")
                         is PolygonWebSocketMessage.StocksMessage.Aggregate -> {
                             //stockPrices[message.ticker!!] = message.closePrice!!
                             //println("${message.ticker}: ${message.closePrice}")
@@ -47,7 +47,7 @@ class RealTimeStockWebSocket {
                 }
 
                 override fun onDisconnect(client: PolygonWebSocketClient) {
-                    println("[Polygon] Web Socket Disconnected!")
+                    println("[Polygon WebSocket] Web Socket Disconnected!")
                 }
 
                 override fun onError(client: PolygonWebSocketClient, error: Throwable) {
