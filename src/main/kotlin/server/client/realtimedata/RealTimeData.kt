@@ -1,4 +1,4 @@
-package me.paulrobinson.server.realtimedata
+package me.paulrobinson.server.client.realtimedata
 
 import api.APIHandler
 import kotlinx.coroutines.CoroutineScope
@@ -14,10 +14,8 @@ import java.text.DecimalFormat
 import java.time.DayOfWeek
 import java.time.Duration
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import java.util.concurrent.ConcurrentHashMap
 
 class RealTimeData: Runnable {
@@ -43,7 +41,7 @@ class RealTimeData: Runnable {
                     if (item.timeToUpdate < System.currentTimeMillis()) {
                         launch {
                             updateRealTimeStock(item.stock)
-                            item.timeToUpdate = System.currentTimeMillis() + (2 * 1000L)
+                            item.timeToUpdate = System.currentTimeMillis() + 1250L
                         }
                     }
                 }
@@ -62,7 +60,7 @@ class RealTimeData: Runnable {
         } else {
             toSend = "001:${stock.ticker},999.99,${format.format(stock.av)},${stock.avTimeBucketData},${stock.currentSentiment}"
         }
-        Main.server.sendDataToAllClients(toSend)
+        //Main.server.sendDataToAllClients(toSend)
     }
 
     fun addRealTimeStock(hsData: HsData) {

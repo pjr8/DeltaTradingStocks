@@ -1,4 +1,4 @@
-package me.paulrobinson.server.realtimedata
+package me.paulrobinson.server.client.realtimedata
 
 import data.timebucket.objects.AVTimeBucketData
 import me.paulrobinson.data.historical.hsdataobjects.News

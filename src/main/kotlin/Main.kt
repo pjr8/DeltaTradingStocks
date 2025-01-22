@@ -3,8 +3,8 @@ package me.paulrobinson
 import me.paulrobinson.data.DataHandler
 import me.paulrobinson.server.Server
 import me.paulrobinson.server.ServerInput
-import me.paulrobinson.server.realtimedata.RealTimeData
-import me.paulrobinson.server.realtimedata.websocket.RealTimeStockWebSocket
+import me.paulrobinson.server.client.realtimedata.RealTimeData
+import me.paulrobinson.server.client.realtimedata.websocket.RealTimeStockWebSocket
 
 class Main {
     companion object {
@@ -22,13 +22,13 @@ class Main {
     }
 
     fun start() {
-
-        websocket.realTimeStocksJava("6XNAOfJMkLup9fyWCxW4SWPYg34jjJkZ")
+        server.start()
+/*        websocket.realTimeStocksJava("6XNAOfJMkLup9fyWCxW4SWPYg34jjJkZ")
         Thread(dataHandler).start()
         Thread(server).start()
         Thread(serverInput).start()
-        Thread(realTimeData).start()
-        while (running) { //val toSend = "001:${stock.ticker},${stock.session!!.sessionCandles.last().close},${format.format(stock.av)},${stock.avTimeBucketData},${stock.currentSentiment}"
+        Thread(realTimeData).start()*/
+        while (running) { //
         }
     }
 }
