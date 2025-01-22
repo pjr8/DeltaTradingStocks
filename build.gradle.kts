@@ -12,6 +12,9 @@ version = ""
 repositories {
     mavenCentral()
     maven(url="https://jitpack.io")
+    maven(url="http://clojars.org/repo/") {
+        isAllowInsecureProtocol = true
+    }
 }
 
 application {
@@ -25,6 +28,10 @@ dependencies {
     implementation("org.mongodb:mongodb-driver-sync:5.1.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1")
     implementation("com.google.code.gson:gson:2.11.0")
+    implementation("com.esotericsoftware:kryo:5.6.2")
+    //implementation("kryonet:kryonet:2.21")
+    implementation("com.github.crykn:kryonet:2.22.9")
+    implementation("org.apache.flink:flink-streaming-java:1.20.0")
 }
 
 tasks.test {

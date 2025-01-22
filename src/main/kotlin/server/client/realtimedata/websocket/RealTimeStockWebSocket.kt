@@ -1,15 +1,16 @@
-package me.paulrobinson.server.realtimedata.websocket
+package me.paulrobinson.server.client.realtimedata.websocket
 
 import io.polygon.kotlin.sdk.websocket.*
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import me.paulrobinson.Main
 import me.paulrobinson.Main.Companion.websocket
+import me.paulrobinson.server.packet.clientbound.PacketUpdateStockPrice
 import java.util.concurrent.ConcurrentHashMap
 
 class RealTimeStockWebSocket {
     private lateinit var websocketClient: PolygonWebSocketClient
-    val stockPrices = ConcurrentHashMap<String, Double>()
 
     @OptIn(DelicateCoroutinesApi::class)
     fun realTimeStocksJava(polygonKey: String) {
@@ -35,12 +36,9 @@ class RealTimeStockWebSocket {
                     when (message) {
                         is PolygonWebSocketMessage.RawMessage -> println(String(message.data))
                         is PolygonWebSocketMessage.StatusMessage -> println("[Polygon WebSocket] Status: ${message.message}")
-                        is PolygonWebSocketMessage.StocksMessage.Aggregate -> {
-                            //stockPrices[message.ticker!!] = message.closePrice!!
-                            //println("${message.ticker}: ${message.closePrice}")
-                        }
+                        is PolygonWebSocketMessage.StocksMessage.Aggregate -> {}
                         is PolygonWebSocketMessage.StocksMessage.Trade -> {
-                            stockPrices[message.ticker!!] = message.price!!
+                            Main.server.server.sendToAllTCP(PacketUpdateStockPrice(message.ticker!!, message.price!!))
                         }
                         else -> println("Received Message: $message")
                     }
